@@ -7,9 +7,7 @@ from app.api.routes.stanje import router as stanje_router
 
 app = FastAPI(title="Recycling Backend")
 
-@app.get("/")
-def root():
-    return {"message": "Backend is running"}
+
 
 app.include_router(otpad_router)
 app.include_router(status_router)
@@ -20,9 +18,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://reciklomat-g7e2h9gvanbdevfx.switzerlandnorth-01.azurewebsites.net"],          # MVP: svuda dozvoli (posle zakljucas na domen webapp-a)
-    allow_methods=["https://reciklomat-g7e2h9gvanbdevfx.switzerlandnorth-01.azurewebsites.net"],
-    allow_headers=["https://reciklomat-g7e2h9gvanbdevfx.switzerlandnorth-01.azurewebsites.net"],
+    allow_origins=["*"],          # MVP: svuda dozvoli (posle zakljucas na domen webapp-a)
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 @app.get("/")
 def root():
