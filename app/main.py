@@ -24,4 +24,7 @@ app.add_middleware(
     allow_methods=["https://reciklomat-g7e2h9gvanbdevfx.switzerlandnorth-01.azurewebsites.net"],
     allow_headers=["https://reciklomat-g7e2h9gvanbdevfx.switzerlandnorth-01.azurewebsites.net"],
 )
+@app.get("/")
+def root():
+    return {"service": "reciklomat-backend", "ok": True}
 
