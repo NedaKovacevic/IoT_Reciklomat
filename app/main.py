@@ -27,4 +27,5 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"service": "reciklomat-backend", "ok": True}
+#komentar
 
