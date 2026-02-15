@@ -20,7 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],          # MVP: svuda dozvoli (posle zakljucas na domen webapp-a)
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"], # treba *
 )
 @app.get("/")
 def root():
