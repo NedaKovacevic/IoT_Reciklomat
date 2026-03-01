@@ -13,5 +13,5 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL nije postavljen (ni env var ni dbURL.env).")
 
-IOT_HUB_CONNECTION_STRING = os.getenv("IOT_HUB_CONNECTION_STRING", "")
+IOT_HUB_CONNECTION_STRING = os.getenv("IOTHUB_SERVICE_CONNECTION_STRING", "")
 DEVICE_ID_DEFAULT = os.getenv("DEVICE_ID_DEFAULT", "uredjaj1")
