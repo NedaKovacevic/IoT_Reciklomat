@@ -1,22 +1,45 @@
-from typing import Optional
-from fastapi import APIRouter, Header, HTTPException
-from app.models.schemas import ControlIn
-from app.services.iot_service import send_command_to_device
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
+
+from app.services.iot_service import start_device, stop_device
 
 router = APIRouter(tags=["control"])
 
-def _require_operator(x_role: Optional[str]):
-    if x_role != "operator":
-        raise HTTPException(status_code=403, detail="Operator role required")
+
+class DeviceControlRequest(BaseModel):
+    device_id: str = Field(..., min_length=1, description="IoT device id, npr. 'uredjaj1'")
+
 
 @router.post("/start")
-def start_device(body: ControlIn, x_role: Optional[str] = Header(default=None, alias="X-Role")):
-    _require_operator(x_role)
-    send_command_to_device(body.device_id, "START")
-    return {"status": "ok", "device_id": body.device_id, "command": "START"}
+def start_device_endpoint(body: DeviceControlRequest):
+    """
+    Sends START direct method to device via IoT Hub.
+    """
+    try:
+        result = start_device(body.device_id)
+        return {"ok": True, "result": result}
+    except ValueError as e:
+        # loš input
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        # IoT Hub / config / auth / device not found / timeout...
+        raise HTTPException(status_code=502, detail=str(e))
+    except Exception as e:
+        # nepredviđeno
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
+
 
 @router.post("/stop")
-def stop_device(body: ControlIn, x_role: Optional[str] = Header(default=None, alias="X-Role")):
-    _require_operator(x_role)
-    send_command_to_device(body.device_id, "STOP")
-    return {"status": "ok", "device_id": body.device_id, "command": "STOP"}
+def stop_device_endpoint(body: DeviceControlRequest):
+    """
+    Sends STOP direct method to device via IoT Hub.
+    """
+    try:
+        result = stop_device(body.device_id)
+        return {"ok": True, "result": result}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")

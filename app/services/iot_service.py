@@ -1,59 +1,96 @@
 # app/services/iot_service.py
 
-from __future__ import annotations
-from typing import Dict
+import os
+from typing import Any, Dict, List, Optional
 
-from app.core.config import IOT_HUB_CONNECTION_STRING
+from azure.iot.hub import IoTHubRegistryManager
+from azure.iot.hub.models import CloudToDeviceMethod
+from azure.core.exceptions import AzureError
 
-# Fallback memorija (lokalno testiranje bez IoT Hub-a)
-_DEVICE_STATUS: Dict[str, str] = {}
 
-def set_device_status(device_id: str, status: str) -> None:
-    _DEVICE_STATUS[device_id] = status
+def _get_iothub_connection_string() -> str:
+    cs = os.getenv("IOTHUB_CONNECTION_STRING")
+    if not cs:
+        # Namerno jasna poruka da odmah znaš šta fali na Azure
+        raise RuntimeError("Missing env var IOTHUB_CONNECTION_STRING (IoT Hub service connection string).")
+    return cs
 
-def get_device_status(device_id: str) -> str:
-    return _DEVICE_STATUS.get(device_id, "OFF")
 
-def _fallback_command(device_id: str, command: str) -> None:
-    if command == "START":
-        set_device_status(device_id, "ON")
-    elif command == "STOP":
-        set_device_status(device_id, "OFF")
+def _get_registry() -> IoTHubRegistryManager:
+    return IoTHubRegistryManager(_get_iothub_connection_string())
 
-def send_command_to_device(device_id: str, command: str) -> None:
+
+def send_command_to_device(
+    device_id: str,
+    method_name: str,
+    payload: Optional[Dict[str, Any]] = None,
+    response_timeout_in_seconds: int = 30,
+    connect_timeout_in_seconds: int = 10,
+) -> Dict[str, Any]:
     """
-    Produkcija: šalje komandu uređaju preko Azure IoT Hub Direct Methods.
-    Fallback: ako nema IOT_HUB_CONNECTION_STRING, radi kao pre (memorija).
+    Invokes an IoT Hub Direct Method on a device.
+
+    Returns a dict with status/payload info to make it JSON serializable.
     """
-    if not IOT_HUB_CONNECTION_STRING:
-        _fallback_command(device_id, command)
-        return
+    if not device_id:
+        raise ValueError("device_id is required")
+    if not method_name:
+        raise ValueError("method_name is required")
 
-    # Import ovde da lokalno ne puca ako nema dependency
-    from azure.iot.hub import IoTHubRegistryManager
+    registry = _get_registry()
 
-    registry = IoTHubRegistryManager(IOT_HUB_CONNECTION_STRING)
+    direct_method = CloudToDeviceMethod(
+        method_name=method_name,
+        payload=payload or {"source": "backend"},
+        response_timeout_in_seconds=response_timeout_in_seconds,
+        connect_timeout_in_seconds=connect_timeout_in_seconds,
+    )
 
-    # Mapiranje komandi -> direct method imena (dogovor sa Mihailom)
-    if command == "START":
-        method_name = "start"
-    elif command == "STOP":
-        method_name = "stop"
-    else:
-        raise ValueError(f"Nepoznata komanda: {command}")
+    try:
+        resp = registry.invoke_device_method(device_id, direct_method)
 
-    # Pozovi direct method
-    resp = registry.invoke_device_method(device_id, {
-        "methodName": method_name,
-        "payload": {"source": "backend"},
-        "responseTimeoutInSeconds": 30
-    })
+        # resp je objekat (ne dict). Pretvaramo u JSON-friendly format.
+        return {
+            "device_id": device_id,
+            "method": method_name,
+            "status": getattr(resp, "status", None),
+            "payload": getattr(resp, "payload", None),
+        }
 
-    # Ako hoćeš, možeš ovde da update-uješ i lokalni status za UI
-    # (UI će svakako čitati status iz tvoje baze/status endpointa)
-    if command == "START":
-        set_device_status(device_id, "ON")
-    else:
-        set_device_status(device_id, "OFF")
+    except AzureError as e:
+        # Azure SDK error (auth, not found, timeout, itd)
+        raise RuntimeError(f"IoT Hub direct method failed: {e}") from e
+    except Exception as e:
+        # Sve ostalo
+        raise RuntimeError(f"Unexpected error invoking direct method: {e}") from e
 
-    # Možeš da dodaš log/print, ali u App Service bolje kroz logging
+
+def start_device(device_id: str) -> Dict[str, Any]:
+    return send_command_to_device(device_id=device_id, method_name="START")
+
+
+def stop_device(device_id: str) -> Dict[str, Any]:
+    return send_command_to_device(device_id=device_id, method_name="STOP")
+
+
+def list_devices(max_devices: int = 100) -> List[Dict[str, Any]]:
+    """
+    Lists devices registered in IoT Hub (device identity registry).
+    """
+    registry = _get_registry()
+    try:
+        devices = registry.get_devices(max_devices)
+        # devices je lista objekata - pretvori u JSON-friendly
+        out: List[Dict[str, Any]] = []
+        for d in devices:
+            out.append(
+                {
+                    "device_id": getattr(d, "device_id", None),
+                    "status": getattr(d, "status", None),
+                    "connection_state": getattr(d, "connection_state", None),
+                    "last_activity_time": str(getattr(d, "last_activity_time", "")) if getattr(d, "last_activity_time", None) else None,
+                }
+            )
+        return out
+    except AzureError as e:
+        raise RuntimeError(f"Failed to list IoT Hub devices: {e}") from e
