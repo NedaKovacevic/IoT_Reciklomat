@@ -1,6 +1,6 @@
-fastapi
-uvicorn[standard]
-gunicorn
+fastapi==0.115.0
+gunicorn==22.0.0
+uvicorn==0.30.6
 sqlalchemy
 pyodbc
 pydantic
