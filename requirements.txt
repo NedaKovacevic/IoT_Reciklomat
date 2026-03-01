@@ -8,4 +8,4 @@ pydantic
 dotenv
 python-dotenv
 azure-iot-hub
-six
+six>=1.16.0
