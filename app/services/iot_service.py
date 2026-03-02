@@ -58,12 +58,18 @@ def invoke_direct_method(
 def start_recognition(device_id: str) -> Dict[str, Any]:
     # Ime metode mora da se poklopi sa onim što Mihailo sluša na uređaju.
     # Ako on očekuje npr "START_RECOGNITION", promeni ovde ili napravi env.
-    return invoke_direct_method(device_id=device_id, method_name="START")
+    return invoke_direct_method(device_id=device_id, method_name="START RECOGNITION")
 
 
 def stop_recognition(device_id: str) -> Dict[str, Any]:
-    return invoke_direct_method(device_id=device_id, method_name="STOP")
+    return invoke_direct_method(device_id=device_id, method_name="STOP RECOGNITION")
 
+def camera_on(device_id: str) -> Dict[str, Any]:
+    return invoke_direct_method(device_id=device_id, method_name="CAMERA_ON")
+
+
+def camera_off(device_id: str) -> Dict[str, Any]:
+    return invoke_direct_method(device_id=device_id, method_name="CAMERA_OFF")
 
 def list_devices_basic(max_devices: int = 100) -> List[Dict[str, Any]]:
     registry = _get_registry()

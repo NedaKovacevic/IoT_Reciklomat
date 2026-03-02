@@ -3,6 +3,7 @@
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from app.db.database import Base
+from sqlalchemy import Boolean
 
 
 class UredjajState(Base):
@@ -12,5 +13,11 @@ class UredjajState(Base):
     device_id = Column(String(128), primary_key=True, index=True)
     mode = Column(String(32), nullable=False)
     last_seen = Column(DateTime, nullable=False, default=datetime.utcnow)
+    camera_on = Column(Boolean, nullable=True)
 
-#test
+
+
+
+
+# u klasi UredjajState, pored recognition_running:
+

@@ -30,6 +30,7 @@ def status(device_id: str = DEVICE_ID_DEFAULT, db: Session = Depends(get_db)):
         data = base.model_dump() if hasattr(base, "model_dump") else dict(base)
 
         data["recognition_running"] = (stanje["recognition_running"] if stanje else False)
+        data["camera_on"] = (stanje["camera_on"] if stanje else False)
         data["mode"] = (stanje["mode"] if stanje else None)
         data["last_seen"] = (stanje["last_seen"] if stanje else None)
 

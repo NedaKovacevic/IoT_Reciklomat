@@ -9,6 +9,7 @@ class StatusOut(BaseModel):
     last_seen: Optional[str] = None
     status: str                    # enabled/disabled (optional but ok)
     counts: Dict[str, int]
+    camera_on: bool = False
 
 class WasteEventIn(BaseModel):
     device_id: str
