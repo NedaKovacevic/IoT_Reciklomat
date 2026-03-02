@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Optional
+from typing import Optional,Any, Dict
+from fastapi.encoders import jsonable_encoder
 
 from app.db import crud
 from app.services.stanje_store import get_stanje
@@ -31,17 +32,9 @@ def handle_waste_event(
 def build_status_response(
     db: Session,
     device_id: str,
-    device_status: str
+    device_status: Dict[str, Any],
 ) -> dict:
-    """
-    Pravi kompletan status uredjaja:
-    - ON/OFF
-    - broj otpada
-    - stanje (READY/RUNNING...)
-    """
-
     counts = crud.get_counts_by_device(db, device_id=device_id)
-
     for k in ["plastic", "metal", "cardboard"]:
         counts.setdefault(k, 0)
 
@@ -49,9 +42,15 @@ def build_status_response(
     mode = stanje["mode"] if stanje else None
     last_seen = stanje["last_seen"] if stanje else None
 
+    # očisti/enkoduj (da nema Azure SDK objekata)
+    device_status = jsonable_encoder(device_status)
+
+    twin = device_status.get("twin") or {}
+    status_str = twin.get("status")  # "enabled" / "disabled" / ...
+
     return {
         "device_id": device_id,
-        "status": device_status,
+        "status": status_str or "unknown",
         "counts": counts,
         "mode": mode,
         "last_seen": last_seen,
