@@ -12,3 +12,5 @@ class UredjajState(Base):
     device_id = Column(String(128), primary_key=True, index=True)
     mode = Column(String(32), nullable=False)
     last_seen = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+#test
