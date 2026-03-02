@@ -34,8 +34,7 @@ def upsert(
         row.last_seen = last_seen
     if recognition_running is not None:
         row.recognition_running = recognition_running
-    #if camera_on is not None:
-    #    row.camera_on = camera_on
+
 
     db.commit()
     db.refresh(row)

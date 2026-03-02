@@ -25,10 +25,8 @@ def status(device_id: str = DEVICE_ID_DEFAULT, db: Session = Depends(get_db)):
 
         stanje = get_stanje(db, device_id)
 
-        # build_status_response verovatno vraća Pydantic model ili dict.
-        # Da bi radilo u oba slučaja:
         data = base.model_dump() if hasattr(base, "model_dump") else dict(base)
-
+        data["status"] = device_status.get("status")
         data["recognition_running"] = (stanje["recognition_running"] if stanje else False)
         #data["camera_on"] = (stanje.get("camera_on", False) if stanje else False)
         data["mode"] = (stanje["mode"] if stanje else None)
