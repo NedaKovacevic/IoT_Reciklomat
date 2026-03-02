@@ -32,3 +32,4 @@ def devices(db: Session = Depends(get_db)):
         )
 
     return out
+#koment
