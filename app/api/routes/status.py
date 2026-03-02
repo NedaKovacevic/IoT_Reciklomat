@@ -29,7 +29,7 @@ def status(device_id: str = DEVICE_ID_DEFAULT, db: Session = Depends(get_db)):
         data["status"] = device_status.get("status")
         data["recognition_running"] = (stanje["recognition_running"] if stanje else False)
         #data["camera_on"] = (stanje.get("camera_on", False) if stanje else False)
-        data["mode"] = (stanje["mode"] if stanje else None)
+        #data["mode"] = (stanje["mode"] if stanje else None)
         data["last_seen"] = (stanje["last_seen"] if stanje else None)
 
         return data
