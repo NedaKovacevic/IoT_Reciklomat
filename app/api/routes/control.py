@@ -62,6 +62,8 @@ def stop(
 
 
 
+from app.services.iot_service import camera_on, camera_off
+
 
 @router.post("/camera/on")
 def turn_camera_on(
@@ -82,6 +84,7 @@ def turn_camera_on(
         last_seen=datetime.utcnow(),
         mode="CAMERA_ON",
     )
+
     return {"status": "ok", "iot": resp}
 
 
@@ -104,4 +107,5 @@ def turn_camera_off(
         last_seen=datetime.utcnow(),
         mode="CAMERA_OFF",
     )
+
     return {"status": "ok", "iot": resp}
