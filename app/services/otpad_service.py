@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Optional,Any, Dict
+from typing import Optional, Any, Dict
 from fastapi.encoders import jsonable_encoder
+from app.db.uredjaj_state_crud import get_state
 
 from app.db import crud
 from app.services.stanje_store import get_stanje
@@ -29,6 +30,13 @@ def handle_waste_event(
     )
 
 
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session
+from typing import Any, Dict
+
+from app.db import crud
+from app.db.uredjaj_state_crud import get_state  # ovo dodaj (putanja kako si nazvala CRUD)
+
 def build_status_response(
     db: Session,
     device_id: str,
@@ -38,11 +46,12 @@ def build_status_response(
     for k in ["plastic", "metal", "cardboard"]:
         counts.setdefault(k, 0)
 
-    stanje = get_stanje(device_id)
-    mode = stanje["mode"] if stanje else None
-    last_seen = stanje["last_seen"] if stanje else None
+    # 1) STATE IZ BAZE (umesto RAM-a)
+    state = get_state(db, device_id)
+    mode = state.mode if state else None
+    last_seen = state.last_seen if state else None
 
-    # očisti/enkoduj (da nema Azure SDK objekata)
+    # 2) očisti/enkoduj IoT response (da nema Azure SDK objekata)
     device_status = jsonable_encoder(device_status)
 
     twin = device_status.get("twin") or {}
