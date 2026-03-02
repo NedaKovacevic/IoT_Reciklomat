@@ -104,3 +104,4 @@ def get_device_iothub_status(device_id: str) -> Dict[str, Any]:
         }
     except AzureError as e:
         raise RuntimeError(f"Failed to get IoT Hub device status: {e}") from e
+
