@@ -7,16 +7,21 @@ from sqlalchemy.orm import Session
 from app.db import uredjaj_state_crud
 
 
-def get_stanje(db: Session, device_id: str) -> Optional[Dict[str, Any]]:
-    row = uredjaj_state_crud.get_by_device_id(db, device_id=device_id)
-    if not row:
-        return None
+def _row_to_dict(row) -> Dict[str, Any]:
     return {
         "device_id": row.device_id,
         "mode": row.mode,
         "last_seen": row.last_seen.isoformat() if row.last_seen else None,
         "recognition_running": bool(row.recognition_running) if row.recognition_running is not None else False,
+        "camera_on": bool(row.camera_on) if row.camera_on is not None else False,
     }
+
+
+def get_stanje(db: Session, device_id: str) -> Optional[Dict[str, Any]]:
+    row = uredjaj_state_crud.get_by_device_id(db, device_id=device_id)
+    if not row:
+        return None
+    return _row_to_dict(row)
 
 
 def upsert_stanje(
@@ -25,6 +30,7 @@ def upsert_stanje(
     mode: Optional[str] = None,
     last_seen: Optional[datetime] = None,
     recognition_running: Optional[bool] = None,
+    camera_on: Optional[bool] = None,
 ) -> Dict[str, Any]:
     row = uredjaj_state_crud.upsert(
         db,
@@ -32,24 +38,19 @@ def upsert_stanje(
         mode=mode,
         last_seen=last_seen,
         recognition_running=recognition_running,
+        camera_on=camera_on,
     )
-    return {
-        "device_id": row.device_id,
-        "mode": row.mode,
-        "last_seen": row.last_seen.isoformat() if row.last_seen else None,
-        "recognition_running": bool(row.recognition_running) if row.recognition_running is not None else False,
-    }
+    return _row_to_dict(row)
+
+
 def set_stanje(db: Session, device_id: str, mode: str) -> Dict[str, Any]:
-    # wrapper da podrži postojeći import u rutama
     return upsert_stanje(
         db,
         device_id=device_id,
         mode=mode,
-        last_seen=datetime.utcnow(),  # bitno jer ti je last_seen u bazi NOT NULL
+        last_seen=datetime.utcnow(),
     )
 
 
 def get_all_devices(db: Session):
-    # ako ti za ovo treba spisak svih uredjaja,
-    # najbezbednije je da ovo radi preko CRUD sloja
     return uredjaj_state_crud.get_all(db)
