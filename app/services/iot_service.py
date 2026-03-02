@@ -54,15 +54,12 @@ def invoke_direct_method(
     except Exception as e:
         raise RuntimeError(f"Unexpected error invoking direct method: {e}") from e
 
+def start_recognition(device_id: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    return invoke_direct_method(device_id=device_id, method_name="START_RECOGNITION", payload=payload)
 
-def start_recognition(device_id: str) -> Dict[str, Any]:
-    # Ime metode mora da se poklopi sa onim što Mihailo sluša na uređaju.
-    # Ako on očekuje npr "START_RECOGNITION", promeni ovde ili napravi env.
-    return invoke_direct_method(device_id=device_id, method_name="START RECOGNITION")
+def stop_recognition(device_id: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    return invoke_direct_method(device_id=device_id, method_name="STOP_RECOGNITION", payload=payload)
 
-
-def stop_recognition(device_id: str) -> Dict[str, Any]:
-    return invoke_direct_method(device_id=device_id, method_name="STOP RECOGNITION")
 
 #def camera_on(device_id: str) -> Dict[str, Any]:
     #return invoke_direct_method(device_id=device_id, method_name="CAMERA_ON")
