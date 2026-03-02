@@ -9,7 +9,7 @@ from azure.core.exceptions import AzureError
 
 
 def _get_iothub_connection_string() -> str:
-    cs = os.getenv("IOTHUB_CONNECTION_STRING")
+    cs = os.getenv("IOTHUB_SERVICE_CONNECTION_STRING")
     if not cs:
         # Namerno jasna poruka da odmah znaš šta fali na Azure
         raise RuntimeError("Missing env var IOTHUB_CONNECTION_STRING (IoT Hub service connection string).")
