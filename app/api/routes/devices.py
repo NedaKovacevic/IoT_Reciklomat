@@ -22,7 +22,7 @@ def devices(db: Session = Depends(get_db)):
         out.append(
             {
                 "device_id": device_id,
-                "status": d.get("status"),  # enabled/disabled
+                "status": d.get("status") or "disabled",  # enabled/disabled
                 "connection_state": d.get("connection_state"),
                 "hub_last_activity_time": d.get("last_activity_time"),
                 "mode": stanje["mode"] if stanje else None,

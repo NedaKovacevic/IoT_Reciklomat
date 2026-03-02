@@ -22,9 +22,11 @@ class Korisnici(Base):
 class UredjajState(Base):
     __tablename__ = "Uredjaji"
 
-    device_id = Column(String(128), primary_key=True, index=True)
-    mode = Column(String(64), nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    device_id = Column(String, nullable=False, unique=True)
+    iot_status = Column(String, nullable=False, default="disabled")
+    mode = Column(String, nullable=True)
     last_seen = Column(DateTime, nullable=True)
-    iot_status = Column(String(64), nullable=True)
-    recognition_running = Column(Boolean, nullable=False, default=False)
+    recognition_running = Column(Boolean, default=False)
+
     #camera_on = Column(Boolean, nullable=True)
