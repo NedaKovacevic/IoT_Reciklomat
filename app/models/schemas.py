@@ -22,7 +22,7 @@ class StatusOut(BaseModel):
 
     # Kontrole
     recognition_running: bool = False
-    camera_on: bool = False
+    #camera_on: bool = False
 
 
 class WasteEventIn(BaseModel):

@@ -13,7 +13,7 @@ def _row_to_dict(row) -> Dict[str, Any]:
         "mode": row.mode,
         "last_seen": row.last_seen.isoformat() if row.last_seen else None,
         "recognition_running": bool(row.recognition_running) if row.recognition_running is not None else False,
-        "camera_on": bool(row.camera_on) if row.camera_on is not None else False,
+        #"camera_on": bool(row.camera_on) if row.camera_on is not None else False,
     }
 
 
@@ -30,7 +30,7 @@ def upsert_stanje(
     mode: Optional[str] = None,
     last_seen: Optional[datetime] = None,
     recognition_running: Optional[bool] = None,
-    camera_on: Optional[bool] = None,
+    #camera_on: Optional[bool] = None,
 ) -> Dict[str, Any]:
     row = uredjaj_state_crud.upsert(
         db,
@@ -38,7 +38,7 @@ def upsert_stanje(
         mode=mode,
         last_seen=last_seen,
         recognition_running=recognition_running,
-        camera_on=camera_on,
+        #camera_on=camera_on
     )
     return _row_to_dict(row)
 

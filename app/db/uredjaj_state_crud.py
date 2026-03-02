@@ -21,7 +21,7 @@ def upsert(
     mode: Optional[str] = None,
     last_seen: Optional[datetime] = None,
     recognition_running: Optional[bool] = None,
-    camera_on: Optional[bool] = None,
+    #camera_on: Optional[bool] = None,
 ) -> UredjajState:
     row = get_by_device_id(db, device_id=device_id)
     if not row:
@@ -34,8 +34,8 @@ def upsert(
         row.last_seen = last_seen
     if recognition_running is not None:
         row.recognition_running = recognition_running
-    if camera_on is not None:          # ✅ DODATO (korak 3.2)
-        row.camera_on = camera_on
+    #if camera_on is not None:
+    #    row.camera_on = camera_on
 
     db.commit()
     db.refresh(row)

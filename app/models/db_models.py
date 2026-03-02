@@ -27,4 +27,4 @@ class UredjajState(Base):
     last_seen = Column(DateTime, nullable=True)
     iot_status = Column(String(64), nullable=True)
     recognition_running = Column(Boolean, nullable=False, default=False)
-    camera_on = Column(Boolean, nullable=True)
+    #camera_on = Column(Boolean, nullable=True)
