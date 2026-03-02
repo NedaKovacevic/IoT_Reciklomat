@@ -8,7 +8,7 @@ from app.db import crud
 from app.services.stanje_store import get_stanje
 from app.services.iot_service import get_device_iothub_status
 
-ALLOWED_TYPES = {"plastic", "metal", "cardboard"}
+ALLOWED_TYPES = {"plastic", "glass", "cardboard"}
 
 
 def handle_waste_event(
@@ -37,7 +37,7 @@ def handle_waste_event(
 
 def build_status_response(db: Session, device_id: str, device_status: Dict[str, Any]) -> dict:
     counts = crud.get_counts_by_device(db, device_id=device_id)
-    for k in ["plastic", "metal", "cardboard"]:
+    for k in ["plastic", "glass", "cardboard"]:
         counts.setdefault(k, 0)
 
     # Tvoje stanje iz baze (mode/last_seen/recognition_running)
