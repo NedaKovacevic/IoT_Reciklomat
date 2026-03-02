@@ -94,3 +94,35 @@ def list_devices(max_devices: int = 100) -> List[Dict[str, Any]]:
         return out
     except AzureError as e:
         raise RuntimeError(f"Failed to list IoT Hub devices: {e}") from e
+
+def get_device_status(device_id: str) -> Dict[str, Any]:
+    """
+    Returns IoT Hub device twin (status + properties) for given device_id.
+    This satisfies import in app/api/routes/status.py: from app.services.iot_service import get_device_status
+    """
+    if not device_id:
+        raise ValueError("device_id is required")
+
+    registry = _get_registry()
+
+    try:
+        twin = registry.get_twin(device_id)
+
+        # SDK nekad vraća JSON string, nekad objekat/dict.
+        # Pretvori u JSON-friendly formu.
+        if isinstance(twin, str):
+            import json
+            twin_obj = json.loads(twin)
+        else:
+            # fallback: pokušaj da uzmeš __dict__ ako je model objekat
+            twin_obj = getattr(twin, "__dict__", twin)
+
+        return {
+            "device_id": device_id,
+            "twin": twin_obj,
+        }
+
+    except AzureError as e:
+        raise RuntimeError(f"Failed to get device status/twin from IoT Hub: {e}") from e
+    except Exception as e:
+        raise RuntimeError(f"Unexpected error getting device status: {e}") from e
