@@ -7,8 +7,8 @@ from app.models.schemas import StanjeIn, StanjeInfo
 from app.db.uredjaj_state_crud import upsert
 from app.services.stanje_store import set_stanje, get_all_devices
 
-router = APIRouter(tags=["stanje"])
-
+#router = APIRouter(tags=["stanje"])
+router = APIRouter()
 
 @router.post("/stanje")
 def stanje(payload: StanjeIn, db: Session = Depends(get_db)):
@@ -21,6 +21,6 @@ def stanje(payload: StanjeIn, db: Session = Depends(get_db)):
     return {"status": "ok"}
 
 
-@router.get("/devices", response_model=list[StanjeInfo])
-def devices():
-    return get_all_devices()
+@router.get("/devices")
+def devices(db: Session = Depends(get_db)):
+    return get_all_devices(db)
