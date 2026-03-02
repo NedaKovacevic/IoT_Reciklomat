@@ -39,3 +39,17 @@ def upsert_stanje(
         "last_seen": row.last_seen.isoformat() if row.last_seen else None,
         "recognition_running": bool(row.recognition_running) if row.recognition_running is not None else False,
     }
+def set_stanje(db: Session, device_id: str, mode: str) -> Dict[str, Any]:
+    # wrapper da podrži postojeći import u rutama
+    return upsert_stanje(
+        db,
+        device_id=device_id,
+        mode=mode,
+        last_seen=datetime.utcnow(),  # bitno jer ti je last_seen u bazi NOT NULL
+    )
+
+
+def get_all_devices(db: Session):
+    # ako ti za ovo treba spisak svih uredjaja,
+    # najbezbednije je da ovo radi preko CRUD sloja
+    return uredjaj_state_crud.get_all(db)

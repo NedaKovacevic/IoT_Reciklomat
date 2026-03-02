@@ -10,7 +10,8 @@ from app.models.db_models import UredjajState
 def get_by_device_id(db: Session, device_id: str) -> Optional[UredjajState]:
     return db.query(UredjajState).filter(UredjajState.device_id == device_id).first()
 
-
+def get_all(db: Session):
+    return db.query(UredjajState).all()
 def upsert(
     db: Session,
     device_id: str,
