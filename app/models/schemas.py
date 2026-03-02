@@ -1,7 +1,14 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
 
+from typing import Dict, Optional
+
+class StatusOut(BaseModel):
+    device_id: str
+    recognition_mode: str          # "RUNNING" / "STOPPED" / "UNKNOWN"
+    last_seen: Optional[str] = None
+    status: str                    # enabled/disabled (optional but ok)
+    counts: Dict[str, int]
 
 class WasteEventIn(BaseModel):
     device_id: str

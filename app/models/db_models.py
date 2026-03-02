@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from datetime import datetime
 from app.db.database import Base
 
@@ -17,3 +17,13 @@ class Korisnici(Base):
     username = Column(String(50), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     role = Column(String(20), nullable=True)
+
+
+class UredjajState(Base):
+    __tablename__ = "Uredjaji"
+
+    device_id = Column(String(128), primary_key=True, index=True)
+    mode = Column(String(64), nullable=True)
+    last_seen = Column(DateTime, nullable=True)
+    iot_status = Column(String(64), nullable=True)
+    recognition_running = Column(Boolean, nullable=False, default=False)

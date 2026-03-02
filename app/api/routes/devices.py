@@ -1,33 +1,33 @@
+# app/api/routes/devices.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.services.iot_service import list_devices
-from app.db.uredjaj_state_crud import list_states  # ako si ga tako nazvala
+from app.services.iot_service import list_devices_basic
+from app.services.stanje_store import get_stanje
 
 router = APIRouter(tags=["devices"])
 
 
 @router.get("/devices")
 def devices(db: Session = Depends(get_db)):
-    # IoT Hub: enabled/disabled lista uređaja
-    hub_devices = list_devices(max_devices=200)
-
-    # DB: mode/last_seen iz dbo.Uredjaji
-    states = list_states(db)
-    states_map = {s.device_id: s for s in states}
+    # IoT Hub spisak (enabled/disabled + connection_state + last_activity_time)
+    hub_devices = list_devices_basic(100)
 
     out = []
     for d in hub_devices:
         device_id = d.get("device_id")
-        state = states_map.get(device_id)
+        stanje = get_stanje(db, device_id) if device_id else None
 
         out.append(
             {
                 "device_id": device_id,
-                "status": str(d.get("status") or "unknown"),   # enabled/disabled
-                "mode": state.mode if state else None,
-                "last_seen": state.last_seen.isoformat() if (state and state.last_seen) else None,
+                "status": d.get("status"),  # enabled/disabled
+                "connection_state": d.get("connection_state"),
+                "hub_last_activity_time": d.get("last_activity_time"),
+                "mode": stanje["mode"] if stanje else None,
+                "last_seen": stanje["last_seen"] if stanje else None,
+                "recognition_running": stanje["recognition_running"] if stanje else False,
             }
         )
 
