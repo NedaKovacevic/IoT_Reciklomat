@@ -30,6 +30,26 @@ def devices(db: Session = Depends(get_db)):
                 "recognition_running": stanje["recognition_running"] if stanje else False,
             }
         )
+        # ---- FAKE DEVICE 1 ----
+        out.append(
+            {
+                "device_id": "fake_1",
+                "status": "enabled",
+                "connection_state": "Connected",
+                "hub_last_activity_time": "2026-03-03T18:30:00",
+                "recognition_running": True,
+            }
+        )
 
+        # ---- FAKE DEVICE 2 ----
+        out.append(
+            {
+                "device_id": "fake_2",
+                "status": "enabled",
+                "connection_state": "Connected",
+                "hub_last_activity_time": "2026-03-03T18:30:00",
+                "recognition_running": False,
+            }
+        )
     return out
 #komentar
