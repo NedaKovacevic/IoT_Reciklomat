@@ -15,7 +15,7 @@ def stanje(payload: StanjeIn, db: Session = Depends(get_db)):
     upsert(
         db,
         device_id=payload.device_id,
-        mode=payload.mode,
+        #mode=payload.mode,
         last_seen=datetime.utcnow()
     )
     return {"status": "ok"}
