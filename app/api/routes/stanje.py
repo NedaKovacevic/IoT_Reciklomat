@@ -21,6 +21,6 @@ def stanje(payload: StanjeIn, db: Session = Depends(get_db)):
     return {"status": "ok"}
 
 
-@router.get("/stanje/devices")
-def devices(db: Session = Depends(get_db)):
-    return get_all_devices(db)
+#@router.get("/stanje/devices")
+#def devices(db: Session = Depends(get_db)):
+    #return get_all_devices(db)
