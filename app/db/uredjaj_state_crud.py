@@ -1,4 +1,3 @@
-# app/db/uredjaj_state_crud.py
 from typing import Optional
 from datetime import datetime
 

@@ -1,5 +1,3 @@
-# app/api/routes/control.py
-
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from datetime import datetime

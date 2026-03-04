@@ -1,4 +1,3 @@
-# app/services/iot_service.py
 import os
 from typing import Any, Dict, List, Optional
 
@@ -30,9 +29,7 @@ def _norm_iothub_value(x: Any) -> Any:
     return str(x)
 
 
-# ---------------------------
-# Direct methods (C2D)
-# ---------------------------
+# Direktne metode
 
 def invoke_direct_method(
     device_id: str,
@@ -76,9 +73,7 @@ def stop_recognition(device_id: str, payload: Optional[Dict[str, Any]] = None) -
     return invoke_direct_method(device_id=device_id, method_name="STOP_RECOGNITION", payload=payload)
 
 
-# ---------------------------
 # Registry (list/get device)
-# ---------------------------
 
 def list_devices_basic(max_devices: int = 100) -> List[Dict[str, Any]]:
     registry = _get_registry()

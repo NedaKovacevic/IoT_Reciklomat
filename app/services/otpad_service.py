@@ -31,10 +31,6 @@ def handle_waste_event(
     )
 
 
-
-
-
-
 def build_status_response(db: Session, device_id: str, device_status: Dict[str, Any]) -> dict:
     counts = crud.get_counts_by_device(db, device_id=device_id)
     for k in ["plastic", "glass", "cardboard"]:
@@ -46,8 +42,8 @@ def build_status_response(db: Session, device_id: str, device_status: Dict[str, 
     last_seen = stanje["last_seen"] if stanje else None
     recognition_running = stanje["recognition_running"] if stanje else False
 
-    # IoT Hub enabled/disabled (ovo je "status" koji ti treba na UI)
-    # device_status koji stiže spolja može biti svašta; najbolje pouzdano povući iz IoT Hub-a:
+
+    #povlaci iz IoT Hub-a:
     iothub = get_device_iothub_status(device_id)
     status_str = iothub.get("status") or "unknown"
 
@@ -57,5 +53,5 @@ def build_status_response(db: Session, device_id: str, device_status: Dict[str, 
         "counts": counts,
         "mode": mode,
         "last_seen": last_seen,
-        "recognition_running": recognition_running,  # ovo je tvoj START/STOP program
+        "recognition_running": recognition_running,  # START/STOP program
     }

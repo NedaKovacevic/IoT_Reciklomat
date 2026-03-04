@@ -1,5 +1,3 @@
-# app/models/uredjaj_state.py
-
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from app.db.database import Base
@@ -19,5 +17,5 @@ class UredjajState(Base):
 
 
 
-# u klasi UredjajState, pored recognition_running:
+
 
