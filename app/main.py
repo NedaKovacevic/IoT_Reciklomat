@@ -38,5 +38,5 @@ app.include_router(devices_router)
 @app.get("/")
 def root():
     return {"service": "reciklomat-backend", "ok": True}
-#komentar lalalala
+#komentar lalala
 
