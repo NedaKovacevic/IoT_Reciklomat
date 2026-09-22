@@ -14,32 +14,12 @@ The backend is the central control layer, tying together the IoT device, cloud i
 
 ## Backend structure
 
-\```
-app/
-├── api/
-│   └── routes/       # API layer — entry point of the system, forwards requests
-│       ├── control.py
-│       ├── devices.py
-│       ├── iothub.py
-│       ├── otpad.py
-│       ├── stanje.py
-│       └── status.py
-├── core/
-│   ├── config.py
-│   └── security.py
-├── services/          # Service layer — business logic, combines IoT Hub and database data
-│   ├── iot_service.py
-│   ├── otpad_service.py
-│   └── stanje_store.py
-├── db/                # Data layer — database communication
-│   ├── crud.py
-│   ├── database.py
-│   └── uredjaj_state_crud.py
-├── models/
-│   ├── db_models.py   # table structure
-│   └── schemas.py     # API response structure
-└── main.py
-\```
+- **api/routes/** — API layer: entry point of the system, forwards requests (`control.py`, `devices.py`, `iothub.py`, `otpad.py`, `stanje.py`, `status.py`)
+- **core/** — configuration and security (`config.py`, `security.py`)
+- **services/** — Service layer: business logic, combines IoT Hub and database data (`iot_service.py`, `otpad_service.py`, `stanje_store.py`)
+- **db/** — Data layer: database communication (`crud.py`, `database.py`, `uredjaj_state_crud.py`)
+- **models/** — `db_models.py` (table structure), `schemas.py` (API response structure)
+- **main.py** — application entry point
 
 **API layer** — contains no business logic, only forwards requests.
 **Service layer** — the heart of the backend: decides what needs to happen, combines data from IoT Hub and the database, implements business rules.
@@ -71,7 +51,6 @@ Python, FastAPI, Azure IoT Hub, Azure SQL Database
 
 ## Team
 
-## Team
 
 Project built for the Internet of Things course.
 
